@@ -154,7 +154,7 @@ def fungsi_ilmiah(fungsi):
 
 # --- 3. PENGATURAN JENDELA UTAMA (GUI) ---
 root = tk.Tk()
-root.title("Kalkulator iOS Sederhana")
+root.title("Kalkulator Sederhana")
 root.configure(bg=BG_UTAMA)
 root.resizable(False, False)
 
