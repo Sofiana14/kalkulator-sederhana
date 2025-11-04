@@ -1,62 +1,45 @@
+# main.py
+
 import tkinter as tk
-from basic_mode import start_basic
-from function_mode import start_function
+from tkinter import ttk
+from constants import *
+from mode_windows import open_basic_calculator, open_function_calculator, ConverterUI
 
-# === WARNA UTAMA ===
-BG_UTAMA = "#000000"
-BTN_KUNING = "#FFB800"
-TEXT_WARNA = "black"
+root = tk.Tk()
+root.title(APP_TITLE)
+root.geometry(f"{APP_WIDTH}x{APP_HEIGHT}")
+root.configure(bg=BG_COLOR)
+root.resizable(False, False)
 
-def main_menu(root):
-    """Menampilkan menu utama kalkulator"""
-    for w in root.winfo_children():
-        w.destroy()
+# Mengatur Style untuk ttk.Button agar serasi dengan tema gelap
+style = ttk.Style()
+# Menggunakan tema 'alt' yang mudah diatur
+style.theme_use('alt') 
 
-    root.title("Kalkulator Serbaguna")
-    root.config(bg=BG_UTAMA)
-
-    # Judul
-    tk.Label(
-        root,
-        text="Pilih Mode Kalkulator",
-        font=("Consolas", 26, "bold"),
-        bg=BG_UTAMA,
-        fg="white",
-        pady=40
-    ).pack()
-
-    # Fungsi pembuat tombol
-    def buat_tombol(teks, fungsi):
-        return tk.Button(
-            root, text=teks, command=fungsi,
-            font=("Arial", 18, "bold"),
-            bg=BTN_KUNING, fg=TEXT_WARNA,
-            activebackground="#FFD633",
-            activeforeground="black",
-            width=20, height=2, bd=0,
-            relief="flat", highlightthickness=0
-        )
-
-    frame = tk.Frame(root, bg=BG_UTAMA)
-    frame.pack(pady=30)
-
-    # 4 pilihan menu
-    buat_tombol("🧮  Basic", lambda: start_basic(root, lambda: main_menu(root))).pack(pady=10)
-    buat_tombol("📐  Function", lambda: start_function(root, lambda: main_menu(root))).pack(pady=10)
-    buat_tombol("🔤  Multi (Coming Soon)", lambda: print("Mode Multi belum aktif")).pack(pady=10)
-    buat_tombol("⚖️  BMI (Coming Soon)", lambda: print("Mode BMI belum aktif")).pack(pady=10)
-
-    tk.Label(
-        root,
-        text="Kalkulator UAS - Python Project",
-        bg=BG_UTAMA,
-        fg="gray",
-        font=("Arial", 10)
-    ).pack(side="bottom", pady=15)
+# Style untuk tombol menu utama
+style.configure('TButton', 
+                background=BTN_COLOR_NORMAL, 
+                foreground=TEXT_COLOR,
+                bordercolor=BG_COLOR,
+                borderwidth=0,
+                focusthickness=3,
+                focuscolor=FG_COLOR,
+                padding=10)
+# Style ketika tombol ditekan
+style.map('TButton', 
+          background=[('active', BTN_COLOR_ACCENT)],
+          foreground=[('active', FG_COLOR)])
 
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.geometry("480x620")
-    main_menu(root)
-    root.mainloop()
+title = tk.Label(root, text="Kalkulator Serbaguna", fg=FG_COLOR, bg=BG_COLOR, font=("Segoe UI", 18, "bold"))
+title.pack(pady=30)
+
+# Gunakan width yang lebih lebar untuk tombol menu
+ttk.Button(root, text="Kalkulator Dasar", command=lambda: open_basic_calculator(root), width=25).pack(pady=15)
+ttk.Button(root, text="Kalkulator Fungsi", command=lambda: open_function_calculator(root), width=25).pack(pady=15)
+ttk.Button(root, text="Converter", command=lambda: ConverterUI(root), width=25).pack(pady=15)
+
+# Tombol keluar dengan style yang sama
+ttk.Button(root, text="Keluar", command=root.destroy, width=25).pack(pady=40)
+
+root.mainloop()
