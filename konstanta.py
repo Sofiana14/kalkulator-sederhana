@@ -1,4 +1,4 @@
-# constants.py
+# konstanta.py
 APP_TITLE = "Kalkulator Serbaguna"
 APP_WIDTH = 400
 APP_HEIGHT = 600

@@ -1,4 +1,4 @@
-# calculator_logic.py
+# logika_kalkulator.py
 
 import math
 
