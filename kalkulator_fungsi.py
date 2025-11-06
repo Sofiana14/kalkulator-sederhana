@@ -98,8 +98,7 @@ def open_function_calculator(root):
                             display_expr += ')' # Tambahkan tutup kurung untuk math.radians
                         elif func_name in ['asin', 'acos', 'atan'] and is_degree_mode.get():
                             # Hasil fungsi invers (misalnya asin) adalah radian, konversi ke derajat
-                            # Pola ini agak kompleks, lebih baik dihandle secara bertahap atau asumsikan input/output default adalah radian jika mode "deg" tidak aktif.
-                            # Untuk kemudahan, kita anggap konversi ke radian (math.radians) hanya untuk sin/cos/tan saat mode DEG.
+
                             # Fungsi invers (asin/acos/atan) akan mengembalikan radian, yang dianggap sebagai nilai numerik murni.
                             display_expr = re.sub(r'{}\('.format(func_name), r'{}\('.format(math_func), display_expr) 
                         else:

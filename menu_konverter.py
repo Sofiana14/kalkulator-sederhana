@@ -12,10 +12,6 @@ except ImportError:
     NumberSystemConverterWindow = None 
 
 # ========================== DEFINISI UNIT LENGKAP ==============================
-
-# Setiap unit dikonversi ke 'factor' terhadap unit dasarnya (factor: 1.0)
-# Contoh Panjang: Basis adalah Meter (m)
-
 UNIT_DEFINITIONS = {
     # 1. PANJANG (Basis: Meter)
     "Panjang": {
@@ -26,7 +22,7 @@ UNIT_DEFINITIONS = {
         'Kaki': {'symbol': 'ft', 'factor': 0.3048},
         'Inci': {'symbol': 'in', 'factor': 0.0254},
         'Basis': 'Meter',
-        # Fungsi konversi khusus untuk penanganan non-linear (opsional)
+        # Fungsi konversi khusus untuk penanganan non-linear 
         'is_complex': False,
     },
     # 2. MASSA (Basis: Kilogram)
@@ -40,7 +36,7 @@ UNIT_DEFINITIONS = {
         'Basis': 'Kilogram',
         'is_complex': False,
     },
-    # 3. SUHU (Basis: Celcius) - Membutuhkan fungsi non-linear khusus
+    # 3. SUHU (Basis: Celcius) 
     "Suhu": {
         'Celcius': {'symbol': '°C', 'factor': 1.0}, # Dianggap basis 1.0
         'Fahrenheit': {'symbol': '°F', 'factor': 1.0},
@@ -87,7 +83,7 @@ UNIT_DEFINITIONS = {
         'Basis': 'Watt',
         'is_complex': False,
     },
-    # 8. MATA UANG (Basis: IDR - Contoh Statis)
+    # 8. MATA UANG 
     "Mata Uang": {
         'Rupiah': {'symbol': 'IDR', 'factor': 1.0},
         'Dollar AS': {'symbol': 'USD', 'factor': 1/15500.0}, # Nilai Statis
@@ -96,7 +92,7 @@ UNIT_DEFINITIONS = {
         'Basis': 'Rupiah',
         'is_complex': False,
     },
-    # 9. AREA (Basis: Meter Persegi)
+    # 9. AREA 
     "Area": {
         'Meter Persegi': {'symbol': 'm²', 'factor': 1.0},
         'Sentimeter Persegi': {'symbol': 'cm²', 'factor': 0.0001},
@@ -105,7 +101,7 @@ UNIT_DEFINITIONS = {
         'Basis': 'Meter Persegi',
         'is_complex': False,
     },
-    # 10. KECEPATAN (Basis: Meter per Detik)
+    # 10. KECEPATAN 
     "Kecepatan": {
         'Meter/Detik': {'symbol': 'm/s', 'factor': 1.0},
         'Kilometer/Jam': {'symbol': 'km/j', 'factor': 1/3.6},
@@ -114,7 +110,7 @@ UNIT_DEFINITIONS = {
         'Basis': 'Meter/Detik',
         'is_complex': False,
     },
-    # 11. TEKANAN (Basis: Pascal)
+    # 11. TEKANAN 
     "Tekanan": {
         'Pascal': {'symbol': 'Pa', 'factor': 1.0},
         'Bar': {'symbol': 'bar', 'factor': 100000.0},
@@ -123,7 +119,7 @@ UNIT_DEFINITIONS = {
         'Basis': 'Pascal',
         'is_complex': False,
     },
-    # 12. WAKTU (Basis: Detik)
+    # 12. WAKTU 
     "Waktu": {
         'Detik': {'symbol': 'd', 'factor': 1.0},
         'Menit': {'symbol': 'm', 'factor': 60.0},
@@ -133,7 +129,7 @@ UNIT_DEFINITIONS = {
         'Basis': 'Detik',
         'is_complex': False,
     },
-    # 13. USIA (Basis: Tahun)
+    # 13. USIA
     "Usia": {
         'Tahun': {'symbol': 't', 'factor': 1.0},
         'Bulan': {'symbol': 'b', 'factor': 1/12.0},
@@ -197,7 +193,7 @@ class ConverterUI(tk.Toplevel):
 
         ttk.Button(self, text="Kembali", command=self.destroy).pack(pady=20) 
 
-    # ==== Fungsi Generik untuk Konversi Unit (menggunakan data lengkap) ====
+    # ==== Fungsi Generik untuk Konversi Unit ====
     def konversi_unit_umum(self, category):
         """Membuka jendela konverter unit dengan semua pilihan satuan untuk kategori tertentu."""
         data = UNIT_DEFINITIONS.get(category)
@@ -278,7 +274,7 @@ class ConverterUI(tk.Toplevel):
     # ==== Fungsi Kalkulator Popup Generik ====
 
     def calculator_popup(self, title, labels, button_text, calculate_func):
-        # ... (Logika calculator_popup tetap sama) ...
+        # ... (Logika calculator_popup) ...
         win = tk.Toplevel(self)
         win.title(title)
         win.configure(bg=BTN_COLOR_NORMAL)

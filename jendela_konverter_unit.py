@@ -48,9 +48,7 @@ def convert_unit(value, from_unit_name, to_unit_name, unit_data):
             
     # --- Konversi Linier Standar (Panjang, Massa, Volume, dll.) ---
     else:
-        # Konversi ke basis: value * factor_input (karena faktor adalah relatif terhadap unit basis)
-        # Konversi dari basis ke tujuan: / factor_tujuan
-        
+       
         # Nilai dalam unit basis:
         value_in_base = value * from_factor
         
@@ -81,7 +79,7 @@ class UnitConverterWindow(tk.Toplevel):
 
         # State: Variabel Ekspresi Input/Output
         self.expression = tk.StringVar(value="0")
-        # PERBAIKAN 1: Menggunakan simbol dari unit tujuan default
+        # Menggunakan simbol dari unit tujuan default
         self.result_var = tk.StringVar(value=f"0 {self.get_unit_symbol(self.to_unit_name.get())}") 
         
         # --- UI Bagian Atas (Input/Output) ---
@@ -121,7 +119,7 @@ class UnitConverterWindow(tk.Toplevel):
         
         self.create_keypad(keypad_frame)
         
-        # PERBAIKAN 2: Panggil _update_result_text() setelah semua label dibuat
+        # Panggil _update_result_text() setelah semua label dibuat
         self._update_result_text() 
 
     def get_unit_symbol(self, unit_name):
