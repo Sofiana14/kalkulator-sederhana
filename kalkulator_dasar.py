@@ -1,5 +1,3 @@
-# kalkulator_dasar.py
-
 import tkinter as tk
 from konstanta import *
 from logika_kalkulator import evaluate_expression

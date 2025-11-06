@@ -1,5 +1,3 @@
-# kalkulator_fungsi.py
-
 import tkinter as tk
 from tkinter import messagebox
 import time, math, re
@@ -47,7 +45,7 @@ def open_function_calculator(root):
                 current_expression.set("0")
         elif key == "=":
             try:
-                # Logika evaluasi yang kompleks (sama seperti sebelumnya)
+                # Logika evaluasi 
                 display_expr = curr.replace('^', '**').replace('x', '*')
                 display_expr = display_expr.replace('π', str(math.pi)).replace('e', str(math.e))
                 

@@ -1,5 +1,3 @@
-# jendela_konverter_unit.py
-
 import tkinter as tk
 from tkinter import ttk
 from konstanta import *

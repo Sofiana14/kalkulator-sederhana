@@ -1,5 +1,3 @@
-# utilitas.py
-
 import tkinter as tk
 import re 
 

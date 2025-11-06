@@ -1,5 +1,3 @@
-# logika_kalkulator.py
-
 import math
 
 def evaluate_expression(expression):
