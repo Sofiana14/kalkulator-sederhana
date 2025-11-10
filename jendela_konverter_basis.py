@@ -4,15 +4,21 @@ from konstanta import *
 from utilitas import adjust_font_size
 import re
 
-# ========================== NUMBER SYSTEM CONVERTER CLASS ==============================
+# ========================== UNIT CONVERTER CLASS ==============================
 
 class NumberSystemConverterWindow(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
         self.title("Konverter Basis Angka")
         self.configure(bg=BG_COLOR)
-        self.geometry("340x550")
+        self.geometry("340x580")  # Ukuran disesuaikan untuk tombol kembali
         self.resizable(False, False)
+        
+        # Simpan referensi ke master window
+        self.master = master
+        
+        # Tambahkan tombol kembali di bagian bawah
+        self.create_back_button()
         
         # Basis Angka yang Tersedia
         self.bases = {
@@ -291,6 +297,42 @@ class NumberSystemConverterWindow(tk.Toplevel):
         except Exception:
             for name in self.base_names:
                 self.results[name].set("Error")
+
+    def create_back_button(self):
+        """Membuat tombol kembali dengan style yang seragam"""
+        # Frame untuk tombol kembali di bagian bawah
+        button_frame = tk.Frame(self, bg=BG_COLOR)
+        button_frame.pack(side="bottom", pady=(10, 15))
+        
+        # Tombol kembali dengan style konsisten
+        back_btn = tk.Button(
+            button_frame,
+            text="« Kembali",
+            font=("Segoe UI", 10),
+            bg=BTN_COLOR_ACCENT,
+            fg=FG_COLOR,
+            bd=0,
+            padx=20,
+            pady=8,
+            command=self.on_closing,
+            cursor="hand2"
+        )
+        back_btn.pack()
+        
+        # Hover effects
+        back_btn.bind("<Enter>", lambda e: back_btn.configure(
+            bg=FG_COLOR,
+            fg=BG_COLOR
+        ))
+        back_btn.bind("<Leave>", lambda e: back_btn.configure(
+            bg=BTN_COLOR_ACCENT,
+            fg=FG_COLOR
+        ))
+
+    def on_closing(self):
+        """Handler untuk menutup window dan kembali ke menu konverter"""
+        self.master.deiconify()  # Tampilkan kembali menu konverter
+        self.destroy()  # Tutup window konverter
 
 # Fungsi untuk membuka jendela dari menu utama
 def open_number_system_converter(root):
