@@ -20,7 +20,7 @@ def convert_unit(value, from_unit_name, to_unit_name, unit_data):
     from_factor = units.get(from_unit_name, {}).get('factor', 1.0)
     to_factor = units.get(to_unit_name, {}).get('factor', 1.0)
     
-    # --- Penanganan Konversi Khusus (Non-Linear, seperti Suhu) ---
+    # --- Penanganan Konversi Khusus (Non-Linier, seperti Suhu) ---
     is_complex = unit_data.get('is_complex', False)
     
     if is_complex and unit_data['Basis'] == 'Celcius':
@@ -91,13 +91,14 @@ class UnitConverterWindow(tk.Toplevel):
         # --- UI Bagian Atas (Input/Output) ---
         
         # Pilihan Unit Input (Menggunakan Layout Vertikal)
-        self.create_unit_dropdown(self.from_unit_name, 'from').pack(anchor='w', padx=15, pady=(15, 0))
+        self.create_unit_dropdown(self.from_unit_name).pack(anchor='w', padx=15, pady=(15, 0))
         
         # Label Input (font dinamis)
         self.input_label = tk.Label(self, textvariable=self.expression, font=("Segoe UI", 24), 
                                      background=BG_COLOR, foreground=FG_COLOR, justify="right", anchor='e', padx=15)
         self.input_label.pack(fill='x', padx=15)
         
+        # Label simbol Unit Input - Harus dibuat sebelum trace diaktifkan
         self.from_symbol_label = tk.Label(self, text=self.get_unit_symbol(self.from_unit_name.get()), font=("Segoe UI", 10), 
                  background=BG_COLOR, foreground="#AAAAAA", justify="right", anchor='e')
         self.from_symbol_label.pack(fill='x', padx=15, pady=(0, 10))
@@ -106,13 +107,14 @@ class UnitConverterWindow(tk.Toplevel):
         tk.Frame(self, bg=BTN_COLOR_ACCENT, height=2).pack(fill='x', padx=15, pady=5)
 
         # Pilihan Unit Output (Menggunakan Layout Vertikal)
-        self.create_unit_dropdown(self.to_unit_name, 'to').pack(anchor='w', padx=15, pady=(10, 0))
+        self.create_unit_dropdown(self.to_unit_name).pack(anchor='w', padx=15, pady=(10, 0))
         
         # Label Output (font dinamis)
         self.output_label = tk.Label(self, textvariable=self.result_var, font=("Segoe UI", 24), 
                                      background=BG_COLOR, foreground=TEXT_COLOR, justify="right", anchor='e', padx=15)
         self.output_label.pack(fill='x', padx=15)
         
+        # Label simbol Unit Output - Harus dibuat sebelum trace diaktifkan
         self.to_symbol_label = tk.Label(self, text=self.get_unit_symbol(self.to_unit_name.get()), font=("Segoe UI", 10), 
                  background=BG_COLOR, foreground="#AAAAAA", justify="right", anchor='e')
         self.to_symbol_label.pack(fill='x', padx=15, pady=(0, 15))
@@ -133,32 +135,39 @@ class UnitConverterWindow(tk.Toplevel):
         
         # Set protokol window closing
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        
+        # =============================================================
+        # === PERBAIKAN: AKTIVASI TRACE SETELAH SEMUA WIDGET DIBUAT ===
+        # =============================================================
+        
+        def _on_from_unit_change(*args):
+            self.from_symbol_label.config(text=self.get_unit_symbol(self.from_unit_name.get()))
+            self._update_conversion()
+            
+        def _on_to_unit_change(*args):
+            self.to_symbol_label.config(text=self.get_unit_symbol(self.to_unit_name.get()))
+            self._update_conversion()
+
+        self.from_unit_name.trace_add("write", _on_from_unit_change)
+        self.to_unit_name.trace_add("write", _on_to_unit_change)
+        
 
     def get_unit_symbol(self, unit_name):
         # Mengakses simbol unit dari struktur data baru
         return self.unit_data.get(unit_name, {}).get('symbol', '')
 
-    def create_unit_dropdown(self, unit_var, direction):
-        """Membuat dropdown menu untuk memilih unit dengan perbaikan scope."""
+    # Mengubah tanda tangan fungsi, karena direction sekarang dapat ditentukan secara implisit.
+    def create_unit_dropdown(self, unit_var):
+        """Membuat dropdown menu untuk memilih unit tanpa mendaftarkan trace di sini."""
         
-        # PERBAIKAN SCOPE: Menggunakan fungsi bersarang yang menangkap 'self'
-        def on_change(*args):
-            # Perbarui simbol unit
-            if direction == 'from':
-                self.from_symbol_label.config(text=self.get_unit_symbol(unit_var.get()))
-            else:
-                self.to_symbol_label.config(text=self.get_unit_symbol(unit_var.get()))
-            
-            # Lakukan konversi ulang
-            self._update_conversion()
-            
-        unit_var.trace_add("write", on_change)
+        # Menentukan arah berdasarkan unit_var
+        direction = 'Input' if unit_var == self.from_unit_name else 'Output'
 
         # Frame untuk menampung label dan dropdown
         frame = tk.Frame(self, bg=BG_COLOR)
         
         # Layout style yang diberikan
-        ttk.Label(frame, text=f"Pilih Unit {direction.capitalize()} ▾", 
+        ttk.Label(frame, text=f"Pilih Unit {direction} ▾", 
                           font=("Segoe UI", 12), background=BG_COLOR, foreground="#AAAAAA").pack(side=tk.LEFT)
                           
         dropdown = ttk.OptionMenu(frame, unit_var, unit_var.get(), *self.unit_names)
@@ -168,6 +177,7 @@ class UnitConverterWindow(tk.Toplevel):
         return frame
 
     def create_keypad(self, keypad_frame):
+# ... (Sisa kode create_keypad tetap sama) ...
         buttons = [
             ('7', BTN_COLOR_NORMAL), ('8', BTN_COLOR_NORMAL), ('9', BTN_COLOR_NORMAL),
             ('4', BTN_COLOR_NORMAL), ('5', BTN_COLOR_NORMAL), ('6', BTN_COLOR_NORMAL),
@@ -213,6 +223,7 @@ class UnitConverterWindow(tk.Toplevel):
 
 
     def _click(self, key):
+# ... (Sisa kode _click tetap sama) ...
         current = self.expression.get()
         if current == "0" and key.isdigit():
             self.expression.set(key)
@@ -233,6 +244,7 @@ class UnitConverterWindow(tk.Toplevel):
         self._update_conversion()
 
     def _update_result_text(self, result=0):
+# ... (Sisa kode _update_result_text tetap sama) ...
         # Memformat hasil
         try:
             # Batasi hingga 10 desimal
@@ -248,6 +260,7 @@ class UnitConverterWindow(tk.Toplevel):
 
 
     def _update_conversion(self):
+# ... (Sisa kode _update_conversion tetap sama) ...
         try:
             val = float(self.expression.get())
             
@@ -269,6 +282,7 @@ class UnitConverterWindow(tk.Toplevel):
             
     # --- METODE KEMBALI ---
     def create_back_button(self):
+# ... (Sisa kode create_back_button tetap sama) ...
         """Membuat tombol kembali dengan style yang seragam"""
         # Frame untuk tombol kembali di bagian bawah
         button_frame = tk.Frame(self, bg=BG_COLOR)
