@@ -4,21 +4,22 @@ from konstanta import *
 from utilitas import adjust_font_size
 import re
 
-# ========================== UNIT CONVERTER CLASS ==============================
+# ========================== NUMBER SYSTEM CONVERTER CLASS ==============================
 
 class NumberSystemConverterWindow(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
         self.title("Konverter Basis Angka")
         self.configure(bg=BG_COLOR)
-        self.geometry("340x580")  # Ukuran disesuaikan untuk tombol kembali
+        # Tinggi disesuaikan untuk menampung tombol Kembali di bagian bawah
+        self.geometry("340x600")
         self.resizable(False, False)
         
-        # Simpan referensi ke master window
+        # Sembunyikan window master (menu konverter)
+        if master:
+            master.withdraw()
+            
         self.master = master
-        
-        # Tambahkan tombol kembali di bagian bawah
-        self.create_back_button()
         
         # Basis Angka yang Tersedia
         self.bases = {
@@ -40,6 +41,10 @@ class NumberSystemConverterWindow(tk.Toplevel):
         self._create_ui()
         self._update_conversion(initial=True)
         
+        # Tambahkan tombol Kembali dan protokol penutupan
+        self.create_back_button()
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
+
     def _create_ui(self):
         # --- UI Bagian Atas (Input) ---
         
@@ -82,6 +87,45 @@ class NumberSystemConverterWindow(tk.Toplevel):
         keypad_frame.pack(expand=True, fill="both", padx=5, pady=5)
         
         self._create_keypad(keypad_frame)
+
+    # --- FUNGSI TAMBAHAN (Tombol Kembali) ---
+
+    def create_back_button(self):
+        """Membuat tombol kembali dengan style yang seragam"""
+        button_frame = tk.Frame(self, bg=BG_COLOR)
+        button_frame.pack(side="bottom", pady=(2, 10))
+        
+        back_btn = tk.Button(
+            button_frame,
+            text="« Kembali",
+            font=("Segoe UI", 9),
+            bg="#444444",
+            fg=FG_COLOR,
+            bd=0,
+            padx=15,
+            pady=6,
+            command=self.on_closing,
+            cursor="hand2"
+        )
+        back_btn.pack()
+        
+        # Hover effects
+        back_btn.bind("<Enter>", lambda e: back_btn.configure(
+            bg="#666666",
+            fg=FG_COLOR
+        ))
+        back_btn.bind("<Leave>", lambda e: back_btn.configure(
+            bg="#444444",
+            fg=FG_COLOR
+        ))
+
+    def on_closing(self):
+        """Handler untuk menutup window dan kembali ke menu konverter"""
+        if self.master:
+            self.master.deiconify()  # Tampilkan kembali menu konverter
+        self.destroy()  # Tutup window konverter unit
+    
+    # --- LOGIKA KONVERTER BASIS (Sama seperti yang Anda kirimkan) ---
 
     def _on_base_change(self, *args):
         # Reset input dan update keypad saat basis input berubah
@@ -133,8 +177,6 @@ class NumberSystemConverterWindow(tk.Toplevel):
         for i in range(6): 
             keypad_frame.grid_rowconfigure(i, weight=1)
             
-        col_offset = 0 # Digunakan untuk angka 7-9 dst jika tombol heksa ada
-
         for b_text, b_color in filtered_buttons:
             
             # Khusus untuk heksadesimal
@@ -265,7 +307,7 @@ class NumberSystemConverterWindow(tk.Toplevel):
                 decimal_val = float(input_str)
                 integer_val = int(decimal_val)
             elif '.' in input_str and from_base != 10:
-                # Basis lain tidak mendukung pecahan, tampilkan error atau gunakan bagian integer
+                # Basis lain tidak mendukung pecahan
                 raise ValueError("Basis non-desimal tidak mendukung pecahan.")
             elif input_str.strip() == "":
                  integer_val = 0
@@ -297,43 +339,5 @@ class NumberSystemConverterWindow(tk.Toplevel):
         except Exception:
             for name in self.base_names:
                 self.results[name].set("Error")
-
-    def create_back_button(self):
-        """Membuat tombol kembali dengan style yang seragam"""
-        # Frame untuk tombol kembali di bagian bawah
-        button_frame = tk.Frame(self, bg=BG_COLOR)
-        button_frame.pack(side="bottom", pady=(10, 15))
-        
-        # Tombol kembali dengan style konsisten
-        back_btn = tk.Button(
-            button_frame,
-            text="« Kembali",
-            font=("Segoe UI", 10),
-            bg=BTN_COLOR_ACCENT,
-            fg=FG_COLOR,
-            bd=0,
-            padx=20,
-            pady=8,
-            command=self.on_closing,
-            cursor="hand2"
-        )
-        back_btn.pack()
-        
-        # Hover effects
-        back_btn.bind("<Enter>", lambda e: back_btn.configure(
-            bg=FG_COLOR,
-            fg=BG_COLOR
-        ))
-        back_btn.bind("<Leave>", lambda e: back_btn.configure(
-            bg=BTN_COLOR_ACCENT,
-            fg=FG_COLOR
-        ))
-
-    def on_closing(self):
-        """Handler untuk menutup window dan kembali ke menu konverter"""
-        self.master.deiconify()  # Tampilkan kembali menu konverter
-        self.destroy()  # Tutup window konverter
-
-# Fungsi untuk membuka jendela dari menu utama
-def open_number_system_converter(root):
-    NumberSystemConverterWindow(root)
+                
+    

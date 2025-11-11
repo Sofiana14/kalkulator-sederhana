@@ -48,7 +48,7 @@ def convert_unit(value, from_unit_name, to_unit_name, unit_data):
             
     # --- Konversi Linier Standar (Panjang, Massa, Volume, dll.) ---
     else:
-       
+        
         # Nilai dalam unit basis:
         value_in_base = value * from_factor
         
@@ -65,19 +65,15 @@ class UnitConverterWindow(tk.Toplevel):
         super().__init__(master)
         self.title(title)
         self.configure(bg=BG_COLOR)
-        self.geometry("340x580")  # Ukuran yang sesuai agar semua konten terlihat
+        # Tinggi disesuaikan untuk tombol Kembali
+        self.geometry("340x580")
         self.resizable(False, False)
         
-        # Simpan referensi ke master window
+        # Sembunyikan window master (menu konverter)
+        if master:
+            master.withdraw()
+            
         self.master = master
-        
-        # Main container langsung di window utama
-        self.main_container = tk.Frame(self, bg=BG_COLOR)
-        self.main_container.pack(fill="both", expand=True, padx=15, pady=(15, 5))
-        
-        # Buat tombol kembali di bagian bawah
-        self.create_back_button()
-        
         self.unit_data = unit_data
         
         # Daftar nama unit yang valid (mengabaikan 'Basis' dan 'is_complex')
@@ -93,72 +89,47 @@ class UnitConverterWindow(tk.Toplevel):
         self.result_var = tk.StringVar(value=f"0 {self.get_unit_symbol(self.to_unit_name.get())}") 
         
         # --- UI Bagian Atas (Input/Output) ---
-        # Container untuk input area
-        input_container = tk.Frame(self.main_container, bg=BG_COLOR)
-        input_container.pack(fill="x", pady=(0, 5))
         
-        # Pilihan Unit Input
-        self.create_unit_dropdown(self.from_unit_name, 'from').pack(anchor='w', padx=15, pady=(0, 0))
-        
-        # Container untuk nilai input
-        input_value_container = tk.Frame(input_container, bg=BG_COLOR)
-        input_value_container.pack(fill="x", pady=(2, 0))
+        # Pilihan Unit Input (Menggunakan Layout Vertikal)
+        self.create_unit_dropdown(self.from_unit_name, 'from').pack(anchor='w', padx=15, pady=(15, 0))
         
         # Label Input (font dinamis)
-        self.input_label = tk.Label(input_value_container, textvariable=self.expression, 
-                                  font=("Segoe UI", 22),  # Sedikit lebih kecil
-                                  background=BG_COLOR, foreground=FG_COLOR,
-                                  justify="right", anchor='e')
+        self.input_label = tk.Label(self, textvariable=self.expression, font=("Segoe UI", 24), 
+                                     background=BG_COLOR, foreground=FG_COLOR, justify="right", anchor='e', padx=15)
         self.input_label.pack(fill='x', padx=15)
         
-        # Label simbol unit input
-        self.from_symbol_label = tk.Label(input_value_container, 
-                                        text=self.get_unit_symbol(self.from_unit_name.get()),
-                                        font=("Segoe UI", 10),
-                                        background=BG_COLOR, foreground="#AAAAAA",
-                                        justify="right", anchor='e')
-        self.from_symbol_label.pack(fill='x', padx=15, pady=(0, 2))
+        self.from_symbol_label = tk.Label(self, text=self.get_unit_symbol(self.from_unit_name.get()), font=("Segoe UI", 10), 
+                 background=BG_COLOR, foreground="#AAAAAA", justify="right", anchor='e')
+        self.from_symbol_label.pack(fill='x', padx=15, pady=(0, 10))
 
-        # Divider dengan efek bayangan
-        divider_frame = tk.Frame(self.main_container, bg=BTN_COLOR_ACCENT, height=2)
-        divider_frame.pack(fill='x', padx=15, pady=12)  # Sedikit lebih besar untuk memisahkan area
+        # Divider
+        tk.Frame(self, bg=BTN_COLOR_ACCENT, height=2).pack(fill='x', padx=15, pady=5)
 
-        # Container untuk output area
-        output_container = tk.Frame(self.main_container, bg=BG_COLOR)
-        output_container.pack(fill="x", pady=(0, 5))
-        
-        # Pilihan Unit Output
-        self.create_unit_dropdown(self.to_unit_name, 'to').pack(anchor='w', padx=15, pady=(2, 0))
-        
-        # Container untuk nilai output
-        output_value_container = tk.Frame(output_container, bg=BG_COLOR)
-        output_value_container.pack(fill="x", pady=(2, 0))
+        # Pilihan Unit Output (Menggunakan Layout Vertikal)
+        self.create_unit_dropdown(self.to_unit_name, 'to').pack(anchor='w', padx=15, pady=(10, 0))
         
         # Label Output (font dinamis)
-        self.output_label = tk.Label(output_value_container, 
-                                   textvariable=self.result_var,
-                                   font=("Segoe UI", 22),  # Sedikit lebih kecil
-                                   background=BG_COLOR, foreground=TEXT_COLOR,
-                                   justify="right", anchor='e')
+        self.output_label = tk.Label(self, textvariable=self.result_var, font=("Segoe UI", 24), 
+                                     background=BG_COLOR, foreground=TEXT_COLOR, justify="right", anchor='e', padx=15)
         self.output_label.pack(fill='x', padx=15)
         
-        # Label simbol unit output
-        self.to_symbol_label = tk.Label(output_value_container,
-                                      text=self.get_unit_symbol(self.to_unit_name.get()),
-                                      font=("Segoe UI", 10),
-                                      background=BG_COLOR, foreground="#AAAAAA",
-                                      justify="right", anchor='e')
-        self.to_symbol_label.pack(fill='x', padx=15, pady=(0, 2))
+        self.to_symbol_label = tk.Label(self, text=self.get_unit_symbol(self.to_unit_name.get()), font=("Segoe UI", 10), 
+                 background=BG_COLOR, foreground="#AAAAAA", justify="right", anchor='e')
+        self.to_symbol_label.pack(fill='x', padx=15, pady=(0, 15))
 
 
         # --- Keypad Kalkulator ---
-        keypad_frame = tk.Frame(self.main_container, bg=BG_COLOR)
-        keypad_frame.pack(expand=True, fill="both", padx=10, pady=(5, 8))  # Sedikit lebih besar untuk ruang bernafas
+        
+        keypad_frame = tk.Frame(self, bg=BG_COLOR)
+        keypad_frame.pack(expand=True, fill="both", padx=5, pady=5)
         
         self.create_keypad(keypad_frame)
         
+        # --- Tombol Kembali ---
+        self.create_back_button()
+        
         # Panggil _update_result_text() setelah semua label dibuat
-        self._update_result_text()
+        self._update_result_text() 
         
         # Set protokol window closing
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -168,8 +139,9 @@ class UnitConverterWindow(tk.Toplevel):
         return self.unit_data.get(unit_name, {}).get('symbol', '')
 
     def create_unit_dropdown(self, unit_var, direction):
-        """Membuat dropdown menu untuk memilih unit."""
+        """Membuat dropdown menu untuk memilih unit dengan perbaikan scope."""
         
+        # PERBAIKAN SCOPE: Menggunakan fungsi bersarang yang menangkap 'self'
         def on_change(*args):
             # Perbarui simbol unit
             if direction == 'from':
@@ -185,12 +157,13 @@ class UnitConverterWindow(tk.Toplevel):
         # Frame untuk menampung label dan dropdown
         frame = tk.Frame(self, bg=BG_COLOR)
         
+        # Layout style yang diberikan
         ttk.Label(frame, text=f"Pilih Unit {direction.capitalize()} ▾", 
-                          font=("Segoe UI", 11), background=BG_COLOR, foreground="#AAAAAA").pack(side=tk.LEFT)
+                          font=("Segoe UI", 12), background=BG_COLOR, foreground="#AAAAAA").pack(side=tk.LEFT)
                           
         dropdown = ttk.OptionMenu(frame, unit_var, unit_var.get(), *self.unit_names)
-        dropdown.config(width=12)  # Sedikit lebih kecil
-        dropdown.pack(side=tk.LEFT, padx=8)
+        dropdown.config(width=15)
+        dropdown.pack(side=tk.LEFT, padx=10)
 
         return frame
 
@@ -211,26 +184,26 @@ class UnitConverterWindow(tk.Toplevel):
             row_val = i // 3
             col_val = i % 3
             
-            btn = tk.Button(keypad_frame, text=b_text, font=("Segoe UI", 16), 
+            btn = tk.Button(keypad_frame, text=b_text, font=("Segoe UI", 18), 
                             bg=b_color, fg=TEXT_COLOR, bd=0, activebackground=ENTRY_BG,
                             activeforeground=TEXT_COLOR,
                             command=lambda val=b_text: self._click(val))
             
             if b_text:
-                btn.grid(row=row_val, column=col_val, sticky="nsew", padx=2, pady=2, ipady=3)
+                btn.grid(row=row_val, column=col_val, sticky="nsew", padx=3, pady=3, ipady=5)
 
         # Input untuk AC dan Del (2x1)
-        btn_ac = tk.Button(keypad_frame, text=side_buttons[0][0], font=("Segoe UI", 16), 
+        btn_ac = tk.Button(keypad_frame, text=side_buttons[0][0], font=("Segoe UI", 18), 
                         bg=BTN_COLOR_ACCENT, fg=side_buttons[0][1], bd=0, activebackground=ENTRY_BG,
                         activeforeground=side_buttons[0][1],
                         command=lambda val=side_buttons[0][0]: self._click(val))
-        btn_ac.grid(row=0, column=3, rowspan=2, sticky="nsew", padx=2, pady=2)
+        btn_ac.grid(row=0, column=3, rowspan=2, sticky="nsew", padx=3, pady=3)
 
-        btn_del = tk.Button(keypad_frame, text="⌫", font=("Segoe UI", 16), 
+        btn_del = tk.Button(keypad_frame, text="⌫", font=("Segoe UI", 18), 
                         bg=BTN_COLOR_ACCENT, fg=side_buttons[1][1], bd=0, activebackground=ENTRY_BG,
                         activeforeground=side_buttons[1][1],
                         command=lambda val="Del": self._click(val))
-        btn_del.grid(row=2, column=3, rowspan=2, sticky="nsew", padx=2, pady=2)
+        btn_del.grid(row=2, column=3, rowspan=2, sticky="nsew", padx=3, pady=3)
 
 
         for i in range(cols):
@@ -288,32 +261,29 @@ class UnitConverterWindow(tk.Toplevel):
             self._update_result_text(hasil)
 
         except ValueError:
-             # Nilai input tidak valid (bukan angka)
-             self._update_result_text(0)
+            # Nilai input tidak valid (bukan angka)
+            self._update_result_text(0)
         except Exception as e:
-             # Error konversi (misalnya akar negatif, log nol)
-             self.result_var.set(f"Error Konversi")
-
-
-        
-    # Metode-metode scrolling dihapus karena tidak digunakan lagi
-
+            # Error konversi (misalnya akar negatif, log nol)
+            self.result_var.set(f"Error Konversi")
+            
+    # --- METODE KEMBALI ---
     def create_back_button(self):
         """Membuat tombol kembali dengan style yang seragam"""
         # Frame untuk tombol kembali di bagian bawah
         button_frame = tk.Frame(self, bg=BG_COLOR)
-        button_frame.pack(side="bottom", pady=(2, 8))
+        button_frame.pack(side="bottom", pady=(2, 10))
         
         # Tombol kembali dengan style konsisten
         back_btn = tk.Button(
             button_frame,
             text="« Kembali",
-            font=("Segoe UI", 9),  # Font sedikit lebih kecil
-            bg="#444444",  # Warna abu-abu seperti di konverter usia
+            font=("Segoe UI", 9),
+            bg="#444444",
             fg=FG_COLOR,
             bd=0,
-            padx=15,  # Padding horizontal lebih kecil
-            pady=6,   # Padding vertical lebih kecil
+            padx=15,
+            pady=6,
             command=self.on_closing,
             cursor="hand2"
         )
@@ -321,15 +291,16 @@ class UnitConverterWindow(tk.Toplevel):
         
         # Hover effects
         back_btn.bind("<Enter>", lambda e: back_btn.configure(
-            bg="#666666",  # Warna abu-abu lebih terang saat hover
+            bg="#666666",
             fg=FG_COLOR
         ))
         back_btn.bind("<Leave>", lambda e: back_btn.configure(
-            bg="#444444",  # Kembali ke warna abu-abu normal
+            bg="#444444",
             fg=FG_COLOR
         ))
 
     def on_closing(self):
         """Handler untuk menutup window dan kembali ke menu konverter"""
-        self.master.deiconify()  # Tampilkan kembali menu konverter
+        if self.master:
+            self.master.deiconify()  # Tampilkan kembali menu konverter
         self.destroy()  # Tutup window konverter unit
