@@ -328,6 +328,7 @@ class NumberSystemConverterWindow(tk.Toplevel):
             # Heksadesimal (Hex)
             self.results[self.base_names[3]].set(hex(integer_val)[2:].upper())
             
+            
         except ValueError as e:
             # Tangani error seperti input invalid (misalnya 'A' di mode Desimal)
             error_msg = "Input Tidak Valid"
